@@ -1,0 +1,41 @@
+{
+  "id": "/geolocation",
+  "cmd": null,
+  "cpus": 1,
+  "mem": 512,
+  "disk": 1024,
+  "instances": 1,
+  "portDefinitions": [
+    {
+      "port": 8899,
+      "protocol": "tcp",
+      "labels": {}
+    }
+  ],
+  "container": {
+    "type": "DOCKER",
+    "volumes": [
+      {
+        "containerPath": "/app/data",
+        "hostPath": "/app/data",
+        "mode": "RW"
+      }
+    ],
+    "docker": {
+      "image": "gusga/geolocation",
+      "network": "BRIDGE",
+      "portMappings": [
+        {
+          "containerPort": 4000,
+          "hostPort": 0,
+          "servicePort": 8899,
+          "protocol": "tcp",
+          "labels": {}
+        }
+      ],
+      "privileged": false,
+      "parameters": [],
+      "forcePullImage": false
+    }
+  }
+}
