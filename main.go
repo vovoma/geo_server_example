@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"fmt"
+	"os"
 )
 
 type Geolocation struct {
@@ -28,6 +30,15 @@ func serve(w http.ResponseWriter, r *http.Request) {
 			log.Fatal(err)
 			return
 		}
+		filename := fmt.Sprintf("user%s_t%d",location.UserID,location.Timestamp)
+		file, err := os.Create("./app/data/"+filename)
+		if err != nil {
+			log.Fatal(err)
+		}
+		data, _ := json.Marshal(location)
+		file.Write(data)
+		log.Printf("File create %s\n",filename)
+
 		locations = append(locations, location)
 		json.NewEncoder(w).Encode(location)
 		defer r.Body.Close()
