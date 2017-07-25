@@ -8,15 +8,14 @@ import (
 	"os"
 )
 
-type Geolocation struct {
-	Latitude  float64 `json:"latitude"`
-	Longitude float64 `json:"longitude"`
-	UserID    string  `json:"userId"`
-	Timestamp int     `json:"timestamp"`
+type geolocation struct {
+	Latitude  float64 `json:"latitude,omitempty"`
+	Longitude float64 `json:"longitude,omitempty"`
+	UserID    string  `json:"userId,omitempty"`
+	Timestamp int     `json:"timestamp,omitempty"`
 }
 
-var DATA_FILES_DIR string
-var locations []Geolocation
+var locations []geolocation
 
 func serve(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
@@ -25,14 +24,14 @@ func serve(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method == http.MethodPost {
-		var location Geolocation
+		var location geolocation
 		err := json.NewDecoder(r.Body).Decode(&location)
 		if err != nil {
 			log.Fatal(err)
 			return
 		}
 		filename := fmt.Sprintf("user%s_t%d", location.UserID, location.Timestamp)
-		file, err := os.Create(DATA_FILES_DIR + filename)
+		file, err := os.Create(dataFileDir + filename)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -46,10 +45,12 @@ func serve(w http.ResponseWriter, r *http.Request) {
 	}
 	return
 }
+var dataFileDir string
+
 func init() {
-	DATA_FILES_DIR = os.Getenv("GEOLOCATION_DATA_FILES_DIR")
-	if DATA_FILES_DIR == "" {
-		DATA_FILES_DIR = "./app/data/"
+	dataFileDir = os.Getenv("GEOLOCATION_DATA_FILES_DIR")
+	if dataFileDir == "" {
+		dataFileDir = "./app/data/"
 	}
 }
 func main() {
